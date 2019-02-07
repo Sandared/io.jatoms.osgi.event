@@ -5,7 +5,7 @@ import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 import org.osgi.service.event.propertytypes.EventTopics;
 
-@Component(immediate = true)
+@Component
 @EventTopics("io/jatoms/osgi/event/fancyevent")
 public class Receiver implements EventHandler{
 
