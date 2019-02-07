@@ -27,8 +27,25 @@ Receiver thread ID is 1
 Sender thread ID is 1
 Receiver thread ID is 22
 ```
-The numbers in your case might be different. The first Sender-Receiver combination results from the method call `sendEvent()` within `Sender`. This is the synchronous way to send messages to possible receivers. This means that when using `sendEvent` your thread will be used to do all the logic within the `handleEvent` methods of all handlers that are listening on your events. This might take quite some time in the worst case, but might be necessary for temporal ordering. 
+The numbers in your case might be different but show the same effect. The first Sender-Receiver combination results from the method call `sendEvent()` within `Sender`. This is the synchronous way to send messages to possible receivers. This means that when using `sendEvent` your thread will be used to do all the logic within the `handleEvent` methods of all handlers that are listening to your events. This might take quite some time in the worst case, but might be necessary for temporal ordering. 
 `postEvent` instead is a fire and forget method that uses another thread to actually deliver the events to possible handlers. This might be fine when you don't care when events are delivered to your receivers.
+
+### How to reproduce
+To be honest I cheated a little bit when I said "OSGi events in 5 minutes or less". You didn't had to write any code to make this example work, aside from the `run osgi.event.app/target/osgi.event.app.jar` command which shouldn't have taken you too long to type ;)
+So what would actually be necessary to reproduce this example in an empty workspace?
+Well, assuming you have a workspace like in the [OSGi base example](https://github.com/Sandared/io.jatoms.osgi.base) where some bash aliases are defined for your workspace all you have to do is:
+* open an empty OSGi base Gitpod workspace (maybe just fork the OSGi base example)
+* type `projectbare` and fill out the information about groupId and artifactId and so on
+* cd into your newly created project
+* type `ds` and also fill out the information about groupId and artifactId
+* type `app` and provide all the information needed
+* Write the classes `Sender` and `Receiver` as they are written here.
+* cd into your `ds` project
+* type `mvn package`
+* cd into your root project
+* type `resolve <artifactId of your app project>`
+* From there on you should be able to run the application as described above.
+* (Instead of using `projectbare` and creating `ds` and `app` by yourself you could also just type `project`, but that will not ask you for the names of `ds` and `app`, but will name them `impl` and `app`)
 
 ## Further Reading
 If you are now intrigued by the simplicity of sending/receiving events within OSGi and want to learn even more about this topic, then I highly recommend you to go to [Dirk Fauth's blog entry](http://blog.vogella.com/2017/05/16/osgi-event-admin-publish-subscribe/) about OSGi's EventAdmin.
