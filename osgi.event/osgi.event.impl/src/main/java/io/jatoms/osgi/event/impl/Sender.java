@@ -20,7 +20,6 @@ public class Sender {
         Map<String, Object> eventData = new HashMap<>();
         eventData.put("thread", Thread.currentThread().getId());
 
-        System.out.println("Sender thread ID is " + Thread.currentThread().getId());
         ea.sendEvent(new Event("io/jatoms/osgi/event/fancyevent", eventData));
         ea.postEvent(new Event("io/jatoms/osgi/event/fancyevent", eventData));
     }

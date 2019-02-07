@@ -11,7 +11,8 @@ public class Receiver implements EventHandler{
 
 	@Override
 	public void handleEvent(Event event) {
-        String threadID = (String) event.getProperty("thread");
-        System.out.println("Receiver thread ID is " + threadID);
+        long threadID = (long) event.getProperty("thread");
+        System.out.println("Sender thread ID is " + threadID);
+        System.out.println("Receiver thread ID is " + Thread.currentThread().getId());
 	}
 }
