@@ -2,12 +2,12 @@
 
 This repository is a showcase on how simple it is to send and receive events in OSGi. As usual it should you take 5 minutes or less to get it up and running... depending on how fast Maven is able to download the internet ;)
 
-![GitpodEvents](TODO)
+![GitpodEvents](https://github.com/Sandared/io.jatoms.osgi.event/blob/master/GitpodEvents.PNG)
 
 ## Run the application
-* [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io#https://github.com/Sandared/io.jatoms.osgi.event)
+* [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io#https://github.com/Sandared/io.jatoms.osgi.event/blob/master/osgi.event/osgi.event.impl/src/main/java/io/jatoms/osgi/event/impl/Sender.java)
 * Wait until Maven has finished downloading the internet
-* type `run osgi.event.app/target/osgi.event.app.jar` in the terminal and watch the console output
+* type `run osgi.event.app/target/osgi.event.app.jar` in the terminal and watch the awesome console output ;)
 
 ## What's going on?
 In OSGi it's super simple to create event publisher and consumer that eiter communicate synchonously or asynchronously without knowing each other. All you have to do is using `EventAdmin` within the sender and implement `EventHandler` within the receiver.
@@ -20,4 +20,16 @@ This is shown in `Sender` and `Receiver`.
 `Receiver` is a (delayed) component too, implements the `EventHandler` interface and is annotated with `@EventTopics` which defines that this handler only wants events that are published under this topic. The `EventHandler` interface is also the "service" under which the receiver component is registered in the OSGi registry. This is done automatically for all `@Component` annotated classes that implement an interface. In the background the `EventAdmin` tells the OSGi registry to notify him for any `EventHandler` that is added to the registry. By this mechanism `EventAdmin` gets a reference to our implementation without the need for us to declare this anywhere explicitly. `EventAdmin` then calls our `handle` method each time an `Event` is published that we are interested in. The `handle` method is rather self-explanatory. 
 
 ### sendEvent vs. postEvent
+In the console output should be something like
+```
+Sender thread ID is 1
+Receiver thread ID is 1
+Sender thread ID is 1
+Receiver thread ID is 22
+```
+The numbers in your case might be different. The first Sender-Receiver combination results from the method call `sendEvent()` within `Sender`. This is the synchronous way to send messages to possible receivers. This means that when using `sendEvent` your thread will be used to do all the logic within the `handleEvent` methods of all handlers that are listening on your events. This might take quite some time in the worst case, but might be necessary for temporal ordering. 
+`postEvent` instead is a fire and forget method that uses another thread to actually deliver the events to possible handlers. This might be fine when you don't care when events are delivered to your receivers.
 
+## Further Reading
+If you are now intrigued by the simplicity of sending/receiving events within OSGi and want to learn even more about this topic, then I highly recommend you to go to [Dirk Fauth's blog entry](http://blog.vogella.com/2017/05/16/osgi-event-admin-publish-subscribe/) about OSGi's EventAdmin.
+If that's not enough information for then have a look at [the official specification](https://osgi.org/specification/osgi.cmpn/7.0.0/service.event.html)
